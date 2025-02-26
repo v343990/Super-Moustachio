@@ -25,6 +25,7 @@ class Game:
         self.player_health = self.player.health
 
         # Enemy setup (imported from enemy.py)
+        self.enemy_defeated = False
         self.enemy = Enemy()
         self.enemy_surf = self.enemy.enemy_surf
         self.enemy_rect = self.enemy.enemy_rect
@@ -131,6 +132,16 @@ class Game:
                 self.enemy_rect.bottom = self.enemy_ground_level  # Stop the enemy from falling through the ground
                 self.enemy_vertical_velocity = 0
 
+    # Collision checks with bullets
+        for bullet, direction, color in self.bullets[:]:  # Copy the list to avoid modifying it while iterating
+            if self.enemy_rect.colliderect(bullet):  # If the enemy collides with a bullet
+                self.bullets.remove((bullet, direction, color))  # Remove the bullet
+                self.enemy_health -= 10  # Decrease enemy health by 10
+                print(self.enemy_health)
+                if self.enemy_health <= 0:
+                    self.enemy_defeated = True
+                    self.enemy_rect = pygame.Rect(-100, -100, 0, 0)  # Move the enemy off-screen
+
 
 
     # Bullet handling
@@ -176,7 +187,8 @@ class Game:
             pygame.draw.rect(self.screen, (240, 0, 0), health) # Draw the health pickups in the array
         
         self.screen.blit(self.player_surf, self.player_rect) # Draw the player
-        self.screen.blit(self.enemy_surf, self.enemy_rect) # Draw the enemy
+        if not self.enemy_defeated:
+            self.screen.blit(self.enemy_surf, self.enemy_rect) # Draw the enemy
 
         pygame.display.flip()
 
