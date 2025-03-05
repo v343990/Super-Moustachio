@@ -9,7 +9,7 @@ class Enemy:
     gravity = 1  # Strength of gravity
     vertical_velocity = 1  # Vertical velocity of the character
     jump_strength = -22.5  # Initial velocity for a jump
-    speed = 3
+    speed = 5
 
     # Colours
     red = (255, 0, 0)

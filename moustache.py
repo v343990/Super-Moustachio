@@ -116,14 +116,7 @@ class Game:
         if self.player_rect.bottom >= self.ground_level and not self.on_platform:
             self.player_rect.bottom = self.ground_level # Stop the player from falling through the ground
             self.vertical_velocity = 0
-        self.player_rect.x = max(0, min(self.player_rect.x, self.width - self.player_rect.width))
-
-        # Collision checks with health pickups
-        for health in self.healthPickup[:]: # Copy the list to avoid modifying it while iterating
-            if self.player_rect.colliderect(health): # If the player collides with a health pickup
-                self.healthPickup.remove(health) # Remove the health pickup
-                self.player_health += 10 # Increase player health by 10
-                self.healthDisp = self.text_font.render(f"+{self.player_health}",True,(20,20,20))
+        self.player_rect.x = max(0, min(self.player_rect.x, self.width - self.player_rect.width)) # Keep the player in bounds
         
         # Collision checks with enemy (damage the player)
         if self.player_rect.colliderect(self.enemy_rect):
@@ -142,6 +135,17 @@ class Game:
     def player_Flash(self):
         self.is_Flashing = True
         self.flash_start_time = pygame.time.get_ticks()
+
+
+    def health_pickup(self):       
+        # Collision checks with health pickups
+        for health in self.healthPickup[:]: # Copy the list to avoid modifying it while iterating
+            if self.player_rect.colliderect(health): # If the player collides with a health pickup
+                self.healthPickup.remove(health) # Remove the health pickup
+                self.player_health += 25 # Increase player health
+                if self.player_health > 100: # Ensure player health does not exceed 100
+                    self.player_health = 100
+                self.healthDisp = self.text_font.render(f"+{self.player_health}", True, (20, 20, 20))
 
     def update_enemy(self, time):
 
@@ -259,6 +263,7 @@ class Game:
             self.update_player() # Update player position
             self.update_enemy(time) # Update enemy position
             self.update_bullets() # Update bullets
+            self.health_pickup()
             self.draw()  # Draw everything
             self.fpsClock.tick(self.fps) # Cap the frame rate / physics updates
 
