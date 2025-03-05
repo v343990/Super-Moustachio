@@ -10,6 +10,7 @@ class Player:
     jump_strength = -22.5  # Initial velocity for a jump
     speed = 10
 
+
     # Colours
     red = (255, 0, 0)
     green = (0, 255, 0)
