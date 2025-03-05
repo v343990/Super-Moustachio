@@ -23,6 +23,15 @@ class Game:
         self.jump_strength = self.player.jump_strength
         self.ground_level = self.height
         self.player_health = self.player.health
+        
+        # Makes player change colour when damaged
+        self.is_Flashing = False
+        self.flash_duration = 50  # Duration of the flash in milliseconds
+        self.flash_start_time = 0
+        self.flash_surface = pygame.Surface((self.player_rect.width, self.player_rect.height))
+        self.flash_surface.fill((255, 0, 0))
+        self.flash_surface.set_alpha(128)
+
 
         # Enemy setup (imported from enemy.py)
         self.enemy_defeated = False
@@ -35,10 +44,13 @@ class Game:
         self.enemy_jump_strength = self.enemy.jump_strength
         self.enemy_gravity = self.enemy.gravity
         self.enemy_ground_level = self.height
+        self.enemy_jump_delay = 1000  # Delay in milliseconds (1 second)
+        self.enemy_last_jump_time = 0  # Time of the last jump
+        self.enemy_damage_delay = 1000  # Delay in milliseconds (1 second)
+        self.enemy_last_damage_time = 0  # Time of the last damage
 
         # UI Setup
         self.text_font = pygame.font.Font('Font/Pixeltype.ttf', 50)
-        self.healthDisp = self.text_font.render(f"+{self.player_health}",True,(20,20,20))
         
         # Bullets setup
         self.bullets = []
@@ -112,9 +124,26 @@ class Game:
                 self.healthPickup.remove(health) # Remove the health pickup
                 self.player_health += 10 # Increase player health by 10
                 self.healthDisp = self.text_font.render(f"+{self.player_health}",True,(20,20,20))
+        
+        # Collision checks with enemy (damage the player)
+        if self.player_rect.colliderect(self.enemy_rect):
+            time = pygame.time.get_ticks()
+            if time - self.enemy_last_damage_time >= self.enemy_damage_delay:
+                self.player_health -= self.enemy.damage
+                self.enemy_last_damage_time = time
+                print(self.player_health)
+                self.player_Flash()
 
+        # Player death check
 
-    def update_enemy(self):
+        if self.player_health <= 0:
+            self.run = False
+
+    def player_Flash(self):
+        self.is_Flashing = True
+        self.flash_start_time = pygame.time.get_ticks()
+
+    def update_enemy(self, time):
 
     # Gravity checks
         self.enemy_vertical_velocity += self.enemy_gravity  # Apply gravity
@@ -141,6 +170,20 @@ class Game:
                 if self.enemy_health <= 0:
                     self.enemy_defeated = True
                     self.enemy_rect = pygame.Rect(-100, -100, 0, 0)  # Move the enemy off-screen
+        
+        if not self.enemy_defeated:
+        # Calculate the direction to the player
+            if self.enemy_rect.x < self.player_rect.x:
+                self.enemy_rect.x += self.enemy_speed  # Move right
+            elif self.enemy_rect.x > self.player_rect.x:
+                self.enemy_rect.x -= self.enemy_speed  # Move left
+
+        # Check if the enemy can jump
+                if self.enemy_rect.y > self.player_rect.y and self.enemy_rect.bottom >= self.enemy_ground_level:
+                    # Check if enough time has passed since the last jump
+                    if time - self.enemy_last_jump_time >= self.enemy_jump_delay:
+                        self.enemy_vertical_velocity = self.enemy_jump_strength  # Make the enemy jump
+                        self.enemy_last_jump_time = time  # Update the last jump time
 
 
 
@@ -175,18 +218,34 @@ class Game:
     # Drawing everything
     def draw(self):
         self.screen.fill((255, 255, 255)) # Fill white background
+        self.healthDisp = self.text_font.render(f"+{self.player_health}",True,(20,20,20))
         self.screen.blit(self.healthDisp,(10,10)) # Display health
         
+        # Draw Platforms
         for platform in self.platforms:
             pygame.draw.rect(self.screen, (0, 0, 0), platform) # Draw the platforms in platforms array
         
+        # Draw Bullets
         for bullet, direction, color in self.bullets:
             pygame.draw.rect(self.screen, color, bullet) # Draw the bullets in bullet array
         
+        # Draw Health Pickups
         for health in self.healthPickup:
             pygame.draw.rect(self.screen, (240, 0, 0), health) # Draw the health pickups in the array
         
+        # Player Flashing and Draw Player
+        if self.is_Flashing:
+            if pygame.time.get_ticks() - self.flash_start_time < self.flash_duration:
+                flash_active = True
+            else:
+                self.is_Flashing = False
+                flash_active = False
+        else:
+            flash_active = False       
         self.screen.blit(self.player_surf, self.player_rect) # Draw the player
+        if flash_active:
+            self.screen.blit(self.flash_surface, self.player_rect)  # Draw the flash surface
+
         if not self.enemy_defeated:
             self.screen.blit(self.enemy_surf, self.enemy_rect) # Draw the enemy
 
@@ -195,9 +254,10 @@ class Game:
     # Main game loop
     def run_game(self):
         while self.run:
+            time = pygame.time.get_ticks()
             self.handle_events() # Handle events
             self.update_player() # Update player position
-            self.update_enemy() # Update enemy position
+            self.update_enemy(time) # Update enemy position
             self.update_bullets() # Update bullets
             self.draw()  # Draw everything
             self.fpsClock.tick(self.fps) # Cap the frame rate / physics updates
