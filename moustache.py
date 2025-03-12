@@ -44,7 +44,7 @@ class Game:
         self.enemy_jump_strength = self.enemy.jump_strength
         self.enemy_gravity = self.enemy.gravity
         self.enemy_ground_level = self.height
-        self.enemy_jump_delay = 1000  # Delay in milliseconds (1 second)
+        self.enemy_jump_delay = 500  # Delay in milliseconds (1 second)
         self.enemy_last_jump_time = 0  # Time of the last jump
         self.enemy_damage_delay = 1000  # Delay in milliseconds (1 second)
         self.enemy_last_damage_time = 0  # Time of the last damage
@@ -66,7 +66,8 @@ class Game:
         self.platforms = [
             pygame.Rect(200, 600, 200, 10),
             pygame.Rect(500, 500, 200, 10),
-            pygame.Rect(800, 400, 200, 10)
+            pygame.Rect(800, 400, 200, 10),
+            pygame.Rect(150, 300, 200, 10)
         ]
         self.run = True
 
@@ -113,6 +114,7 @@ class Game:
                 self.player_rect.bottom = platform.top  # Move the player to the top of the platform
                 self.vertical_velocity = 0 # Stop the player from falling
                 self.on_platform = True # Boolean which allows the player to stop falling through platform
+
         if self.player_rect.bottom >= self.ground_level and not self.on_platform:
             self.player_rect.bottom = self.ground_level # Stop the player from falling through the ground
             self.vertical_velocity = 0
@@ -188,7 +190,6 @@ class Game:
                     if time - self.enemy_last_jump_time >= self.enemy_jump_delay:
                         self.enemy_vertical_velocity = self.enemy_jump_strength  # Make the enemy jump
                         self.enemy_last_jump_time = time  # Update the last jump time
-
 
 
     # Bullet handling
