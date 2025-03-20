@@ -25,12 +25,17 @@ class Game:
         self.player_health = self.player.health
         
         # Makes player change colour when damaged
+        self.is_Flashing_Damage = False
         self.is_Flashing = False
         self.flash_duration = 50  # Duration of the flash in milliseconds
+        self.flash_duration_health = 150  # Duration of the flash in milliseconds
         self.flash_start_time = 0
         self.flash_surface = pygame.Surface((self.player_rect.width, self.player_rect.height))
-        self.flash_surface.fill((255, 0, 0))
+        self.flash_surface.fill((0, 255, 0))
         self.flash_surface.set_alpha(128)
+        self.flash_surface_damage = pygame.Surface((self.player_rect.width, self.player_rect.height))
+        self.flash_surface_damage.fill((255, 0, 0))
+        self.flash_surface_damage.set_alpha(128)
 
 
         # Enemy setup (imported from enemy.py)
@@ -127,17 +132,12 @@ class Game:
                 self.player_health -= self.enemy.damage
                 self.enemy_last_damage_time = time
                 print(self.player_health)
-                self.player_Flash()
+                self.player_Flash_Damage()
 
         # Player death check
 
         if self.player_health <= 0:
             self.run = False
-
-    def player_Flash(self):
-        self.is_Flashing = True
-        self.flash_start_time = pygame.time.get_ticks()
-
 
     def health_pickup(self):       
         # Collision checks with health pickups
@@ -145,9 +145,20 @@ class Game:
             if self.player_rect.colliderect(health): # If the player collides with a health pickup
                 self.healthPickup.remove(health) # Remove the health pickup
                 self.player_health += 25 # Increase player health
+                self.player_Flash()
                 if self.player_health > 100: # Ensure player health does not exceed 100
                     self.player_health = 100
                 self.healthDisp = self.text_font.render(f"+{self.player_health}", True, (20, 20, 20))
+
+
+    def player_Flash_Damage(self):
+        self.is_Flashing_Damage = True
+        self.flash_start_time = pygame.time.get_ticks()
+
+    def player_Flash(self):
+        self.is_Flashing = True
+        self.flash_start_time = pygame.time.get_ticks()
+
 
     def update_enemy(self, time):
 
@@ -238,18 +249,34 @@ class Game:
         for health in self.healthPickup:
             pygame.draw.rect(self.screen, (240, 0, 0), health) # Draw the health pickups in the array
         
-        # Player Flashing and Draw Player
-        if self.is_Flashing:
+        # Player Flashing (Damage and Health) and Draw Player
+        # Damage Flash
+        if self.is_Flashing_Damage:
             if pygame.time.get_ticks() - self.flash_start_time < self.flash_duration:
+                flash_damage_active = True
+            else:
+                self.is_Flashing_Damage = False
+                flash_damage_active = False
+        else:
+            flash_damage_active = False      
+
+        # Health Flash
+        if self.is_Flashing:
+            if pygame.time.get_ticks() - self.flash_start_time < self.flash_duration_health:
                 flash_active = True
             else:
                 self.is_Flashing = False
                 flash_active = False
         else:
-            flash_active = False       
+            flash_active = False      
+
         self.screen.blit(self.player_surf, self.player_rect) # Draw the player
+        
+        if flash_damage_active:
+            self.screen.blit(self.flash_surface_damage, self.player_rect)  # Draw the player flash for damage
+
         if flash_active:
-            self.screen.blit(self.flash_surface, self.player_rect)  # Draw the flash surface
+            self.screen.blit(self.flash_surface, self.player_rect)  # Draw the player flash for gaining health
 
         if not self.enemy_defeated:
             self.screen.blit(self.enemy_surf, self.enemy_rect) # Draw the enemy

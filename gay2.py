@@ -23,6 +23,12 @@ class Game:
         self.vertical_velocity = self.player.vertical_velocity
         self.jump_strength = self.player.jump_strength
         self.ground_level = self.height
+        self.player_health = self.player.health
+
+        # Health Pickup setup
+        self.healthPickup = [
+            pygame.Rect(250, 775, 25, 25)
+        ]
        
         # Platform setup
         self.platforms = [
@@ -76,6 +82,9 @@ class Game:
     # Drawing everything
     def draw(self):
         self.screen.fill((255, 255, 255)) # Fill white background
+
+        for health in self.healthPickup:
+            pygame.draw.rect(self.screen, (240,0,0), health)
        
         for platform in self.platforms:
             pygame.draw.rect(self.screen, (0, 0, 0), platform) # Draw the platforms in platforms array
