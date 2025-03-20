@@ -196,7 +196,7 @@ class Game:
                 self.enemy_rect.x -= self.enemy_speed  # Move left
 
         # Check if the enemy can jump
-                if self.enemy_rect.y > self.player_rect.y and self.enemy_rect.bottom >= self.enemy_ground_level:
+                if self.enemy_rect.y > self.player_rect.y or self.enemy_rect.bottom >= self.enemy_ground_level:
 
                     if time - self.enemy_last_jump_time >= self.enemy_jump_delay: # Check if enough time has passed since the last jump
                         self.enemy_vertical_velocity = self.enemy_jump_strength  # Make the enemy jump
