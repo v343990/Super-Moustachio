@@ -4,6 +4,41 @@ from player import Player
 from pygame.locals import *
 from enemy import Enemy
 
+class MainMenu:
+    def __init__(self, screen, font):
+        self.screen = screen
+        self.font = font
+        self.options = ["Start Game", "Quit"]
+        self.selected_option = 0
+
+    def draw(self):
+        self.screen.fill((0, 0, 0))  # Black background
+        title = self.font.render("Super Moustachio", True, (255, 255, 255))
+        self.screen.blit(title, (self.screen.get_width() // 2 - title.get_width() // 2, 100))
+
+        for i, option in enumerate(self.options):
+            color = (255, 255, 255) if i == self.selected_option else (100, 100, 100)
+            text = self.font.render(option, True, color)
+            self.screen.blit(text, (self.screen.get_width() // 2 - text.get_width() // 2, 300 + i * 50))
+
+        pygame.display.flip()
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    self.selected_option = (self.selected_option - 1) % len(self.options)
+                elif event.key == pygame.K_DOWN:
+                    self.selected_option = (self.selected_option + 1) % len(self.options)
+                elif event.key == pygame.K_RETURN:
+                    if self.selected_option == 0:  # Start Game
+                        return "start"
+                    elif self.selected_option == 1:  # Quit
+                        return "quit"
+        return None
+
 class Game:
     def __init__(self):
         pygame.init()
