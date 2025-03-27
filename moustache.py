@@ -116,16 +116,15 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.run = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:  # Left mouse button
-                    mouse_x = event.pos[0]
-                    if mouse_x < self.player_rect.centerx:
-                        direction = 'left'
-                    else:
-                        direction = 'right'
-                    bullet_rect = pygame.Rect(self.player_rect.centerx, self.player_rect.centery, self.bullet_width, self.bullet_height)
-                    self.bullets.append((bullet_rect, direction, (0, 0, 0)))  # Black bullets for mouse click
             elif event.type == pygame.KEYDOWN:
+                if event.key == K_LEFT:  # Left button
+                    direction = 'left' # Bullet goes left
+                    bullet_rect = pygame.Rect(self.player_rect.centerx, self.player_rect.centery, self.bullet_width, self.bullet_height) # Create a bullet rectangle after shooting
+                    self.bullets.append((bullet_rect, direction, (0, 0, 0)))  
+                if event.key == K_RIGHT:  # Right button
+                    direction = 'right' # Bullet goes right
+                    bullet_rect = pygame.Rect(self.player_rect.centerx, self.player_rect.centery, self.bullet_width, self.bullet_height) # Create a bullet rectangle after shooting
+                    self.bullets.append((bullet_rect, direction, (0, 0, 0)))
                 if event.key == K_s:  # 's' key
                     bullet_rect = pygame.Rect(self.player_rect.centerx, self.player_rect.bottom, self.bullet_height, self.bullet_width)
                     self.bullets.append((bullet_rect, 'down', (139, 69, 19)))  # Brown bullets for 's' key
