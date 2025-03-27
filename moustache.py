@@ -125,6 +125,7 @@ class Game:
                     direction = 'right' # Bullet goes right
                     bullet_rect = pygame.Rect(self.player_rect.centerx, self.player_rect.centery, self.bullet_width, self.bullet_height) # Create a bullet rectangle after shooting
                     self.bullets.append((bullet_rect, direction, (0, 0, 0)))
+
                 if event.key == K_s:  # 's' key
                     bullet_rect = pygame.Rect(self.player_rect.centerx, self.player_rect.bottom, self.bullet_height, self.bullet_width)
                     self.bullets.append((bullet_rect, 'down', (139, 69, 19)))  # Brown bullets for 's' key
