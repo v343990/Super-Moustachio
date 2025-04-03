@@ -4,6 +4,48 @@ from player import Player
 from pygame.locals import *
 from enemy import Enemy
 
+class Menu:
+    def __init__(self):
+        pygame.init()
+        self.width, self.height = 1280, 800
+        self.screen = pygame.display.set_mode((self.width, self.height))
+        pygame.display.set_caption('Moustache Display')
+        self.font = pygame.font.Font('Font/Pixeltype.ttf', 50)
+        clock = pygame.time.Clock()
+        self.run = True
+
+
+        # Load the background image
+        self.background = pygame.image.load('Images/Background Image.jpeg').convert()
+
+    def draw(self):
+        self.screen.blit(self.background, (0, 0))
+
+        # Draw Menu Buttons to Click
+        # self.start_button = pygame.draw.rect(self.screen, (0, 0, 0), (640 - 100, 400 - 25, 200, 50), border_radius=25)
+        self.start = pygame.draw.rect(self.screen, (0, 0, 0), (640 - 100, 660 - 25, 200, 50), border_radius=25)
+
+
+
+
+    def run_menu(self):
+        while self.run:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.run = False
+                    quit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.start.collidepoint(event.pos):
+                        game = Game()
+                        game.run_game()  # Start the game loop
+
+            self.draw()  # Draw everything
+            pygame.display.flip()  # Update the display
+            pygame.time.Clock().tick(60)  # Cap the frame rate
+
+
+        
+
 class Game:
     def __init__(self):
         pygame.init()
@@ -81,6 +123,7 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.run = False
+                exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == K_LEFT:  # Left button
                     direction = 'left' # Bullet goes left
@@ -144,10 +187,13 @@ class Game:
         for health in self.healthPickup[:]: # Copy the list to avoid modifying it while iterating
             if self.player_rect.colliderect(health): # If the player collides with a health pickup
                 self.healthPickup.remove(health) # Remove the health pickup
+                previous_health = self.player_health  # Define previous_health variable
                 self.player_health += 25 # Increase player health
                 self.player_Flash()
                 if self.player_health > 100: # Ensure player health does not exceed 100
                     self.player_health = 100
+                health_increase = self.player_health - previous_health
+                print(f"Health Increased by {health_increase}")
                 self.healthDisp = self.text_font.render(f"+{self.player_health}", True, (20, 20, 20))
 
 
@@ -295,7 +341,7 @@ class Game:
             self.draw()  # Draw everything
             self.fpsClock.tick(self.fps) # Cap the frame rate / physics updates
 
-# Run the game
+# Load Menu
 if __name__ == "__main__":
-    game = Game()
-    game.run_game()
+    menu = Menu()
+    menu.run_menu()
