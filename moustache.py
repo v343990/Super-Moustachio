@@ -1,5 +1,4 @@
 import pygame
-import pygame.locals
 from player import Player
 from pygame.locals import *
 from enemy import Enemy
@@ -11,7 +10,6 @@ class Menu:
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('Moustache Display')
         self.font = pygame.font.Font('Font/Pixeltype.ttf', 50)
-        clock = pygame.time.Clock()
         self.run = True
 
 
@@ -23,10 +21,21 @@ class Menu:
 
         # Draw Menu Buttons to Click
         # self.start_button = pygame.draw.rect(self.screen, (0, 0, 0), (640 - 100, 400 - 25, 200, 50), border_radius=25)
-        self.start = pygame.draw.rect(self.screen, (0, 0, 0), (640 - 100, 660 - 25, 200, 50), border_radius=25)
-
-
-
+        # Start Button
+        self.start = pygame.draw.rect(self.screen, (0, 0, 0), (640 - 100, 640 - 25, 200, 50), border_radius=25)
+        self.start_text = self.font.render("Start", True, (255, 255, 255))
+        self.start_text_rect = self.start_text.get_rect(center=(640, 645))
+        self.screen.blit(self.start_text, self.start_text_rect)
+        # Options Button
+        self.options = pygame.draw.rect(self.screen, (0, 0, 0), (640 - 100, 700 - 25, 200, 50), border_radius=25)
+        self.options_text = self.font.render("Options", True, (255, 255, 255))
+        self.options_text_rect = self.options_text.get_rect(center=(640, 705))
+        self.screen.blit(self.options_text, self.options_text_rect)
+        # Quit Button
+        self.quit = pygame.draw.rect(self.screen, (0, 0, 0), (640 - 100, 760 - 25, 200, 50), border_radius=25)
+        self.quit_text = self.font.render("Quit", True, (255, 255, 255))
+        self.quit_text_rect = self.quit_text.get_rect(center=(640, 765))
+        self.screen.blit(self.quit_text, self.quit_text_rect)
 
     def run_menu(self):
         while self.run:
@@ -38,13 +47,16 @@ class Menu:
                     if self.start.collidepoint(event.pos):
                         game = Game()
                         game.run_game()  # Start the game loop
+                    elif self.quit.collidepoint(event.pos):
+                        self.run = False
+                        quit()
+                    elif self.options.collidepoint(event.pos):
+                        print("Options clicked")
+                        # Add options functionality here
 
             self.draw()  # Draw everything
             pygame.display.flip()  # Update the display
             pygame.time.Clock().tick(60)  # Cap the frame rate
-
-
-        
 
 class Game:
     def __init__(self):
