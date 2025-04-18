@@ -182,6 +182,14 @@ class Bullet(pygame.sprite.Sprite):
                     print(f'Enemy Health: {enemy.health}')
                     self.kill()
 
+class Item(pygame.sprite.Sprite):
+    def __init__(self, type, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.type = type
+        self.image = boxes[self.type]
+        self.rect = self.image.get_rect()
+        self.rect.midtop = (x + tile_size // 2)
+
 class Poop(pygame.sprite.Sprite):
     def __init__(self, x, y, direction):
         pygame.sprite.Sprite.__init__(self)
