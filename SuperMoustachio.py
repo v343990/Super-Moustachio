@@ -70,6 +70,7 @@ for x in range(tileTypes): # Iterates through the 21 tiles and loads them in
     imageList.append(img) # Add to image list
 
 font = pygame.font.SysFont('Agency FB', 30)
+fontBig = pygame.font.SysFont('Pixeltype Regular', 50)
 pixelFont = pygame.font.SysFont('Pixeltype Regular', 40)
 
 boxes = {
@@ -910,6 +911,7 @@ while run:
             darkOverlay.set_alpha(180)
             darkOverlay.fill((0,0,0)) # Fill the darkOverlay surface with black
             screen.blit(darkOverlay, (0,0)) # blit the dark overlay
+            textDisplayer(f"Your time was: {minutes:02}:{seconds:02}", fontBig, (255, 255, 255), width // 2 - 150, 600)
             pygame.draw.rect(screen, (180, 180, 180), inputBox)
             textSurf = pixelFont.render(inputText, False, (20, 20, 20))
             screen.blit(textSurf, (inputBox.x + 10, inputBox.y + 15))
