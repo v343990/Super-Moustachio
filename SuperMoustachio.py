@@ -27,7 +27,6 @@ tileTypes = 21
 level = 1
 screenScroll = 0
 backgroundScroll = 0
-fadeStart = False
 
 startGame = False
 showSettings = False
