@@ -99,7 +99,7 @@ class Game:
         self.enemy_rect = self.enemy.enemy_rect
         self.enemy_speed = self.enemy.speed
         self.enemy_health = self.enemy.health
-        self.enemy_vertical_velocity = self.enemy.vertical_velocity
+        self.enemy_vertical_velocity = self.enemy.vertical_velocityn
         self.enemy_jump_strength = self.enemy.jump_strength
         self.enemy_gravity = self.enemy.gravity
         self.enemy_ground_level = self.height

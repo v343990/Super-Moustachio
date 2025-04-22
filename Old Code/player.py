@@ -2,7 +2,7 @@ import pygame
 
 class Player:
     def __init__(self):
-        self.player_surf = pygame.image.load('Images/playermoustache.png')
+        self.player_surf = pygame.image.load('Images/player/Idle/1.png')
         self.player_surf = pygame.transform.scale(self.player_surf, (85, 50))  # Resize the image
         self.player_rect = self.player_surf.get_rect(center=(640, 400))
         self.health = 100 # Health of the player

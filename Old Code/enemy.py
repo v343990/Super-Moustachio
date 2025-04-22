@@ -2,7 +2,7 @@ import pygame
 
 class Enemy:
     def __init__(self):
-        self.enemy_surf = pygame.image.load('Images/enemymoustache.png')
+        self.enemy_surf = pygame.image.load('Images/enemy/Idle/1.png')
         self.enemy_surf = pygame.transform.scale(self.enemy_surf, (85, 50))  # Resize the image
         self.enemy_rect = self.enemy_surf.get_rect(center=(900, 600))
         self.health = 50 # Health of the enemy
