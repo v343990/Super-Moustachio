@@ -45,11 +45,14 @@ poopImage = pygame.image.load('Images/poop/poop.png').convert_alpha()
 healthImage = pygame.image.load('Images/healthBox.png').convert_alpha()
 ammoImage = pygame.image.load('Images/ammoBox.png').convert_alpha()
 poopBoxImage = pygame.image.load('Images/poopBox.png').convert_alpha()
+
 skyImage = pygame.image.load('Images/background/sky.png')
-mountainImage = pygame.image.load('Images/background/mountain.png').convert_alpha()
+mountainImage = pygame.image.load('Images/background/mountain.png')
 pine1Image = pygame.image.load('Images/background/pine1.png').convert_alpha()
 pine2Image = pygame.image.load('Images/background/pine2.png').convert_alpha()
-menuImage = pygame.image.load('Images/Background Image.jpeg')
+
+
+
 
 # Load Buttons
 startButton = pygame.image.load('Images/buttons/startButton.png').convert_alpha()
@@ -59,7 +62,8 @@ restartButton = pygame.image.load('Images/buttons/restartButton.png').convert_al
 leaderboardButton = pygame.image.load('Images/buttons/leaderboardButton.png').convert_alpha()
 mainMenuButton = pygame.image.load('Images/buttons/mainMenuButton.png').convert_alpha()
 
-# Settings Background
+# Menus Backgrounds
+menuImage = pygame.image.load('Images/Background Image.jpeg').convert_alpha()
 settingsBGImage = pygame.image.load('Images/settingsBGImage.png').convert_alpha()
 
 # Load tiles in a list
@@ -697,8 +701,10 @@ while run:
                             seconds = totalTime % 60
                             saveScore(inputText, minutes, seconds) # Saves the score the player has inputted
                             inputActive = False # Disables inputActive
+                            startGame = False
                             showLeaderboard = True # Shows the leaderboard
                             leaderboardStartTime = pygame.time.get_ticks() # Leaderboard duration counter
+
                         elif event.key == pygame.K_BACKSPACE: # Handles deleting text
                             inputText = inputText[:-1] # Deletes 1 character from inputText string
                         else:
@@ -755,6 +761,8 @@ while run:
                 run = False
                 quit()
             elif leaderboardButtonRect.collidepoint(mousePos):
+                inputActive = False
+                startGame = False
                 showLeaderboard = True
                 leaderboardStartTime = pygame.time.get_ticks()
         
@@ -855,6 +863,7 @@ while run:
                 levelCompleteTime = pygame.time.get_ticks() # gets the time after level is complete
                 inputActive = True
 
+
         elif not levelComplete:
             deathOverlay = pygame.Surface((width, height)) # Dark overlay
             deathOverlay.fill((150,0,0)) # Fill the darkOverlay surface with red
@@ -918,6 +927,7 @@ while run:
             textDisplayer("Enter your name: ", pixelFont, (255,255,255), inputBox.x, inputBox.y - 40)
         
         elif showLeaderboard:
+            inputActive = False
             drawLeaderboard()
             if leaderboardStartTime and pygame.time.get_ticks() - leaderboardStartTime > 5000:
                 showLeaderboard = False
