@@ -341,7 +341,6 @@ class Character(pygame.sprite.Sprite):
             bullet = Bullet(self.rect.centerx + (0.65 * self.rect.size[0] * self.direction), self.rect.centery, self.direction)
             bulletGroup.add(bullet)
             self.ammo -= 1 # Take ammo away
-            print(f'{self.ammo} bullets left') # Display ammo in console
 
     def animate(self):
         COOLDOWN = 100 # Time between each frame
@@ -454,7 +453,6 @@ class Bullet(pygame.sprite.Sprite):
             if pygame.sprite.spritecollide(enemy, bulletGroup, False):
                 if enemy.alive:
                     enemy.health -= 25
-                    print(f'Enemy Health: {enemy.health}')
                     self.kill()
 
 class World():
@@ -554,7 +552,6 @@ class Item(pygame.sprite.Sprite):
                     player.health = player.maxHealth
             elif self.type == 'Ammo':
                 player.ammo += 15
-                print(player.ammo)
             elif self.type == 'Poop':
                 player.poops += 3
             self.kill()
@@ -610,7 +607,6 @@ class Poop(pygame.sprite.Sprite):
             for enemy in enemyGroup:
                 if abs(self.rect.centerx - enemy.rect.centerx) < tile_size * 2 and abs(self.rect.centery - enemy.rect.centery) < tile_size * 4: # abs incase a negative is given, i just want the value 
                     enemy.health -= 50
-                    print(f'Enemy Health: {enemy.health}')
 
 class Pooplosion(pygame.sprite.Sprite):
     def __init__(self, x, y, scale):
@@ -755,7 +751,6 @@ while run:
                 startGame = True
                 startTime = pygame.time.get_ticks()
             elif settingsButtonRect.collidepoint(mousePos):
-                print("Show Settings")
                 showSettings = True
             elif quitButtonRect.collidepoint(mousePos):
                 run = False
@@ -849,7 +844,6 @@ while run:
                 poopGroup.add(poop)
                 player.poops -= 1
                 poopThrown = True
-                print(f'Player has {player.poops} poops left')
             # Moving    
             if movingLeft or movingRight:
                 player.changeMode(1) # 1 = Run
