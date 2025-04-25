@@ -38,7 +38,6 @@ levelCompleteTime = None
 showLeaderboard = False
 leaderboardStartTime = None
 
-
 # Load Images
 bulletImage = pygame.image.load('Images/bullet/9mm.png').convert_alpha()
 poopImage = pygame.image.load('Images/poop/poop.png').convert_alpha()
@@ -50,9 +49,6 @@ skyImage = pygame.image.load('Images/background/sky.png')
 mountainImage = pygame.image.load('Images/background/mountain.png')
 pine1Image = pygame.image.load('Images/background/pine1.png').convert_alpha()
 pine2Image = pygame.image.load('Images/background/pine2.png').convert_alpha()
-
-
-
 
 # Load Buttons
 startButton = pygame.image.load('Images/buttons/startButton.png').convert_alpha()
@@ -748,8 +744,17 @@ while run:
         mousePos = pygame.mouse.get_pos()
         if pygame.mouse.get_pressed()[0]: # If left mouse button is clicked
             if startButtonRect.collidepoint(mousePos):
-                startGame = True
+                backgroundScroll = 0 # Reset background position
+                worldData = resetLevel()
+                with open(f'level{level}Data.csv', newline='') as csvfile: # Open the level data file and load it in
+                    reader = csv.reader(csvfile, delimiter=',') # Reads the CSV, and everytime theres a comma, is a new value
+                    for x, row in enumerate(reader): # Break CSV into individual chunks
+                        for y, tile in enumerate(row): # enumerate allows us to keep count of where we are in the iteration
+                            worldData[x][y] = int(tile)
+                world = World()
+                player, healthBar = world.processData(worldData)
                 startTime = pygame.time.get_ticks()
+                startGame = True
             elif settingsButtonRect.collidepoint(mousePos):
                 showSettings = True
             elif quitButtonRect.collidepoint(mousePos):
@@ -921,6 +926,8 @@ while run:
             textDisplayer("Enter your name: ", pixelFont, (255,255,255), inputBox.x, inputBox.y - 40)
         
         elif showLeaderboard:
+            worldData = resetLevel()
+            startGame = False
             inputActive = False
             drawLeaderboard()
             if leaderboardStartTime and pygame.time.get_ticks() - leaderboardStartTime > 5000:
