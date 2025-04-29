@@ -5,6 +5,15 @@ import csv # storing level data
 import json # storing keybinds
 
 pygame.init()
+pygame.joystick.init()
+
+if pygame.joystick.get_count() > 0:
+    joystick = pygame.joystick.Joystick(0)
+    joystick.init()
+    print(f"Joystick Connected: {joystick.get_name()}")
+else:
+    print("Joystick not connected")
+
 
 width = 1280
 height = 800
@@ -333,7 +342,7 @@ class Character(pygame.sprite.Sprite):
 
     def shoot(self):
         if self.shotCooldown == 0 and self.ammo > 0:
-            self.shotCooldown = 17
+            self.shotCooldown = 12
             bullet = Bullet(self.rect.centerx + (0.65 * self.rect.size[0] * self.direction), self.rect.centery, self.direction)
             bulletGroup.add(bullet)
             self.ammo -= 1 # Take ammo away
@@ -597,6 +606,9 @@ class Poop(pygame.sprite.Sprite):
             pooplosion = Pooplosion(self.rect.x, self.rect.y, 0.5) # Create an explosion
             pooplosionGroup.add(pooplosion) # Generate explosion sprite
 
+            if pygame.joystick.get_count() > 0:
+                joystick.rumble(0.2, 0.2, 200)  # strong rumble for 300 milliseconds
+
             # Damaging anyone in range
             if abs(self.rect.centerx - player.rect.centerx) < tile_size * 2 and abs(self.rect.centery - player.rect.centery) < tile_size * 4: # abs incase a negative is given, i just want the value 
                 player.health -= 50
@@ -623,7 +635,7 @@ class Pooplosion(pygame.sprite.Sprite):
     
     def update(self):
         self.rect.x += screenScroll
-        speed = 4
+        speed = 3
         self.count += 1
 
         if self.count >= speed:
@@ -681,9 +693,9 @@ while run:
                     movingRight = True
                 if event.key == keybinds['shoot']:
                     shoot = True
-                if event.key == keybinds['poop']:
+                if event.key == keybinds['poop'] :
                     poopPressed = True
-                if event.key == keybinds['jump'] and player.alive:
+                if event.key == keybinds['jump']:
                     player.isJumping = True
                 if inputActive: # If text box is up
                     if event.type == pygame.KEYDOWN:
@@ -713,6 +725,30 @@ while run:
             if event.key == keybinds['poop']:
                 poopPressed = False
                 poopThrown = False
+        
+        if event.type == pygame.JOYBUTTONDOWN:
+            if event.button == 1:
+                shoot = True
+            if event.button == 2:
+                poopPressed = True
+            if event.button == 0:
+                player.isJumping = True
+            if event.button == 13:
+                movingLeft = True
+            if event.button == 14:
+                movingRight = True
+
+
+        if event.type == pygame.JOYBUTTONUP:
+            if event.button == 1:
+                shoot = False
+            if event.button == 2:
+                poopPressed = False
+                poopThrown = False
+            if event.button == 13:
+                movingLeft = False
+            if event.button == 14:
+                movingRight = False
 
 
     if not startGame and not showSettings and not showLeaderboard: # Menu Stuff
@@ -842,8 +878,18 @@ while run:
              # Center it under the player health bar which is 200 pixels wide
             textDisplayer(timer, font, (255, 255, 255), 1165, 5)
             # Shooting
+            vibrationCooldown = 0
+
+            if vibrationCooldown > 0:
+                vibrationCooldown -= 0
+
             if shoot:
                 player.shoot()
+                if player.ammo > 0:
+                    joystick.rumble(0.1, 0.1, 15)
+                else:
+                    joystick.rumble(1, 1, 10)
+                    joystick.stop_rumble()
             elif poopPressed and poopThrown == False and player.poops > 0:
                 poop = Poop(player.rect.centerx + (50 * player.direction), player.rect.centery - 10, player.direction)
                 poopGroup.add(poop)
